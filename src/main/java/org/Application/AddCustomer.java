@@ -1,22 +1,35 @@
 package org.Application;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 public class AddCustomer {
 
-	public static void main(String[] args) {
-		
-
+    public void addnewCustomer(String customerName, String accountNumber, double initialBalance) {
         Session session = Config.getSession();
+        Transaction tx = null;
 
-        session.beginTransaction();
-        
-        Customer cu = new Customer();
-        cu.setCustomer_name("Jake");
-        session.persist(cu);
-        
-        session.getTransaction().commit();
+        try {
+            tx = session.beginTransaction();
 
-        session.close();
-	}
+            // 1. Create and persist Customer
+            Customer customer = new Customer(customerName);
+            session.persist(customer);
+
+            // 2. Create and persist Bank Account linked to Customer
+            Bank_Accounts account = new Bank_Accounts(customer, accountNumber, initialBalance);
+            session.persist(account);
+
+            tx.commit();
+            System.out.println("Customer and Bank Account created successfully!");
+            System.out.println("Assigned Customer ID: " + customer.getCustomer_id());
+
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            System.err.println("Error adding customer: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
 }

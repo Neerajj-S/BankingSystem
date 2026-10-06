@@ -1,11 +1,17 @@
 package org.Application;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 
 @Entity 
@@ -24,6 +30,9 @@ public class Bank_Accounts {
 	    private String account_number;
 
 	    private double balance;
+	    
+	    @OneToMany(mappedBy = "bankAccount", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	    private List<Transactions> transactions = new ArrayList<>();
 
 	    public Bank_Accounts() {
 	    }
@@ -64,6 +73,14 @@ public class Bank_Accounts {
 
 	    public void setBalance(double balance) {
 	        this.balance = balance;
+	    }
+	    
+	    public List<Transactions> getTransactions() {
+	        return transactions;
+	    }
+
+	    public void setTransactions(List<Transactions> transactions) {
+	        this.transactions = transactions;
 	    }
 	
 }
